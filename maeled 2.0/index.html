@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion - MAELED</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+    .login-card{width:100%;max-width:520px;background:#fff;border-radius:14px;padding:28px;box-shadow:0 12px 30px rgba(0,0,0,.12);}
+    .role-pills{display:flex;gap:10px;flex-wrap:wrap}
+    .pill{border:1px solid #ddd;border-radius:999px;padding:10px 14px;cursor:pointer;user-select:none}
+    .pill.active{border-color:#e74c3c;background:rgba(231,76,60,.08)}
+    .small-muted{color:#666;font-size:.9rem}
+  </style>
+</head>
+<body class="login-page" data-required-role="public">
+  <div class="login-wrap">
+    <div class="login-card">
+      <h1 style="margin:0">MAELED</h1>
+      <p class="small-muted" style="margin-top:6px">Choisis ton rôle puis connecte-toi.</p>
+
+      <div class="role-pills" id="rolePills" style="margin:14px 0 6px">
+        <div class="pill active" data-role="user"><b>User</b></div>
+        <div class="pill" data-role="admin"><b>Admin</b></div>
+      </div>
+      <div class="small-muted">Comptes test : <b>user@app.com / user123</b> — <b>admin@app.com / admin123</b></div>
+
+      <hr style="margin:18px 0">
+
+      <form id="loginForm">
+        <input type="hidden" id="role" value="user">
+        <label>Email</label>
+        <input id="email" type="email" required style="width:100%;padding:12px;margin:6px 0 12px;border:1px solid #ddd;border-radius:10px" value="user@app.com">
+        <label>Mot de passe</label>
+        <input id="password" type="password" required style="width:100%;padding:12px;margin:6px 0 14px;border:1px solid #ddd;border-radius:10px" value="user123">
+        <div id="loginError" style="display:none;color:#c0392b;margin-bottom:10px">Identifiants invalides.</div>
+        <button type="submit" style="width:100%;padding:12px;border:0;border-radius:10px;background:#e74c3c;color:#fff;font-weight:700;cursor:pointer">
+          Se connecter
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+</body>
+</html>

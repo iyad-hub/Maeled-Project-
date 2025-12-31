@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personnel - MAELED</title>
+  <link rel="stylesheet" href="../admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body data-required-role="admin">
+  <div class="dashboard-container">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <h2>MAELED</h2>
+        <p>Restaurant Management</p>
+      </div>
+      
+      <nav class="sidebar-menu">
+        <a href="dashboard.html" class="menu-item">
+          <i class="fas fa-tachometer-alt"></i> Dashboard
+        </a>
+        <a href="reservations.html" class="menu-item">
+          <i class="fas fa-calendar-check"></i> Réservations
+        </a>
+        <a href="menu.html" class="menu-item">
+          <i class="fas fa-utensils"></i> Menu
+        </a>
+        <a href="orders.html" class="menu-item">
+          <i class="fas fa-shopping-cart"></i> Commandes
+        </a>
+        <a href="staff.html" class="menu-item active">
+          <i class="fas fa-user-tie"></i> Personnel
+        </a>
+        <a href="inventory.html" class="menu-item">
+          <i class="fas fa-boxes"></i> Inventaire
+        </a>
+      </nav>
+      
+      
+    </div>
+    
+    <main class="main-content">
+      <header class="main-header">
+        <div>
+          <h1>Gestion du Personnel</h1>
+          <p>Gérez les employés et les horaires</p>
+        </div>
+        
+        <div>
+          <button class="notification-btn">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge" id="notificationCount">0</span>
+          </button>
+          <button class="mobile-menu-toggle">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      <a href="#" id="adminLogout" style="position:fixed;top:14px;right:14px;z-index:9999;background:#e74c3c;color:#fff;padding:10px 12px;border-radius:10px;text-decoration:none;font-weight:700">Logout</a>
+</header>
+      
+      <div class="kpi-grid" style="margin-bottom: 30px;">
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background: #3498db;">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="kpi-info">
+            <h3>Employés Totaux</h3>
+            <div class="kpi-value" id="totalStaff">0</div>
+          </div>
+        </div>
+        
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background: #2ecc71;">
+            <i class="fas fa-user-check"></i>
+          </div>
+          <div class="kpi-info">
+            <h3>En Service</h3>
+            <div class="kpi-value" id="staffOnDuty">0</div>
+          </div>
+        </div>
+        
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background: #f39c12;">
+            <i class="fas fa-calendar-alt"></i>
+          </div>
+          <div class="kpi-info">
+            <h3>Shifts Aujourd'hui</h3>
+            <div class="kpi-value" id="todayShifts">0</div>
+          </div>
+        </div>
+        
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background: #e74c3c;">
+            <i class="fas fa-user-slash"></i>
+          </div>
+          <div class="kpi-info">
+            <h3>Absents</h3>
+            <div class="kpi-value" id="absentStaff">0</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="crud-header">
+        <h2>Tous les Employés</h2>
+        <div>
+          <button class="btn btn-success" id="addStaffBtn">
+            <i class="fas fa-plus"></i> Ajouter un Employé
+          </button>
+          <button class="btn btn-primary" id="scheduleBtn">
+            <i class="fas fa-calendar"></i> Planning
+          </button>
+        </div>
+      </div>
+      
+      <div class="table-container">
+        <div class="table-header">
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchStaff" placeholder="Rechercher un employé...">
+          </div>
+          
+          <select class="filter-select" id="roleFilter">
+            <option value="all">Tous les rôles</option>
+            <option value="serveur">Serveur</option>
+            <option value="cuisinier">Cuisinier</option>
+            <option value="gérant">Gérant</option>
+            <option value="barman">Barman</option>
+            <option value="réceptionniste">Réceptionniste</option>
+          </select>
+          
+          <select class="filter-select" id="statusFilter">
+            <option value="all">Tous les statuts</option>
+            <option value="actif">Actif</option>
+            <option value="inactif">Inactif</option>
+          </select>
+        </div>
+        
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th data-sort="id">ID</th>
+              <th data-sort="name">Nom</th>
+              <th data-sort="role">Rôle</th>
+              <th data-sort="email">Email</th>
+              <th data-sort="phone">Téléphone</th>
+              <th data-sort="status">Statut</th>
+              <th data-sort="shift">Shift Actuel</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="staffTableBody">
+            <!-- Staff data will be loaded here -->
+          </tbody>
+        </table>
+        
+        <div class="pagination">
+          <div class="pagination-info" id="paginationInfo">
+            Affichage de 1 à 10 sur 0 employés
+          </div>
+          
+          <div class="pagination-controls">
+            <button class="page-btn prev-page" disabled>
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            
+            <div class="page-numbers" id="pageNumbers">
+              <button class="page-btn active">1</button>
+            </div>
+            
+            <button class="page-btn next-page" disabled>
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  
+  <!-- Add Staff Modal -->
+  <div class="modal" id="addStaffModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Ajouter un Employé</h3>
+        <button class="close-modal">&times;</button>
+      </div>
+      
+      <form id="staffForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nom Complet *</label>
+            <input type="text" id="staffName" required>
+          </div>
+          <div class="form-group">
+            <label>Rôle *</label>
+            <select id="staffRole" required>
+              <option value="">Choisir un rôle</option>
+              <option value="serveur">Serveur</option>
+              <option value="cuisinier">Cuisinier</option>
+              <option value="gérant">Gérant</option>
+              <option value="barman">Barman</option>
+              <option value="réceptionniste">Réceptionniste</option>
+              <option value="plongeur">Plongeur</option>
+              <option value="gestionnaire">Gestionnaire</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email *</label>
+            <input type="email" id="staffEmail" required>
+          </div>
+          <div class="form-group">
+            <label>Téléphone *</label>
+            <input type="tel" id="staffPhone" required>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Salaire Horaire (€)</label>
+            <input type="number" id="staffSalary" step="0.01" min="0" value="12.50">
+          </div>
+          <div class="form-group">
+            <label>Date d'Embauche</label>
+            <input type="date" id="staffHireDate">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Adresse</label>
+          <textarea id="staffAddress" rows="2" placeholder="Adresse complète..."></textarea>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Heures par semaine</label>
+            <input type="number" id="staffHours" min="10" max="60" value="35">
+          </div>
+          <div class="form-group">
+            <label>Statut</label>
+            <select id="staffStatus">
+              <option value="actif">Actif</option>
+              <option value="inactif">Inactif</option>
+              <option value="congé">En congé</option>
+            </select>
+          </div>
+        </div>
+        
+        <button type="submit" class="btn btn-success btn-block">
+          <i class="fas fa-save"></i> Enregistrer l'Employé
+        </button>
+      </form>
+    </div>
+  </div>
+
+<div class="modal" id="editStaffModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Modifier le Personnel</h3>
+        <button class="close-modal">&times;</button>
+      </div>
+      
+      <form id="editStaffForm">
+        <input type="hidden" id="editStaffId">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nom Complet *</label>
+            <input type="text" id="editStaffName" required>
+          </div>
+          <div class="form-group">
+            <label>Rôle *</label>
+            <select id="editStaffRole" required>
+              <option value="">Choisir un rôle</option>
+              <option value="serveur">Serveur</option>
+              <option value="cuisinier">Cuisinier</option>
+              <option value="gérant">Gérant</option>
+              <option value="barman">Barman</option>
+              <option value="réceptionniste">Réceptionniste</option>
+              <option value="plongeur">Plongeur</option>
+              <option value="gestionnaire">Gestionnaire</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email *</label>
+            <input type="email" id="editStaffEmail" required>
+          </div>
+          <div class="form-group">
+            <label>Téléphone *</label>
+            <input type="tel" id="editStaffPhone" required>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Salaire Horaire (€)</label>
+            <input type="number" id="editStaffSalary" step="0.01" min="0" value="12.50">
+          </div>
+          <div class="form-group">
+            <label>Date d'Embauche</label>
+            <input type="date" id="editStaffHireDate">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Adresse</label>
+          <textarea id="editStaffAddress" rows="2" placeholder="Adresse complète..."></textarea>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Heures par semaine</label>
+            <input type="number" id="editStaffHours" min="10" max="60" value="35">
+          </div>
+          <div class="form-group">
+            <label>Statut</label>
+            <select id="editStaffStatus">
+              <option value="actif">Actif</option>
+              <option value="inactif">Inactif</option>
+              <option value="congé">En congé</option>
+            </select>
+          </div>
+        </div>
+        
+        <button type="submit" class="btn btn-success btn-block">
+          <i class="fas fa-save"></i> Enregistrer les Modifications</button>
+      </form>
+    </div>
+  </div>
+
+  
+  <script src="../auth.js"></script>
+  <script src="../staff.js"></script>
+  <script>
+    document.getElementById("adminLogout")?.addEventListener("click", function(e){e.preventDefault(); MaeledAuth.logout(true);});
+  </script>
+</body>
+</html>

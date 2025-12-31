@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Réservation - MAELED</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-required-role="user">
+  <header>
+    <h1>MAELED</h1>
+  </header>
+
+  <nav>
+    <ul>
+      <li><a href="home.html">Accueil</a></li>
+      <li><a href="reservation.html">Réservation</a></li>
+      <li><a href="menu.html">Menu</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="#" id="logoutLink" style="background-color: #9b59b6; color: white; padding: 0.5rem 1rem; border-radius: 4px;">Logout</a></li>
+
+    </ul>
+  </nav>
+
+  <section class="reservation-form">
+    <h2>Formulaire de Réservation</h2>
+    <form id="reservationForm">
+      <div class="form-group">
+        <label for="name">Nom : *</label>
+        <input type="text" id="name" name="name" required>
+      </div>
+      <div class="form-group">
+        <label for="prenom">Prénom : *</label>
+        <input type="text" id="prenom" name="prenom" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email :</label>
+        <input type="email" id="email" name="email">
+      </div>
+      <div class="form-group">
+        <label for="phone">Téléphone : *</label>
+        <input type="tel" id="phone" name="phone" required>
+      </div>
+      <div class="form-group">
+        <label for="date">Date : *</label>
+        <input type="date" id="date" name="date" required>
+      </div>
+      <div class="form-group">
+        <label for="time">Heure : *</label>
+        <input type="time" id="time" name="time" required>
+      </div>
+      <div class="form-group">
+        <label for="people">Nombre de personnes : *</label>
+        <input type="number" id="people" name="people" min="1" required>
+      </div>
+      <div class="form-group">
+        <label for="notes">Notes spéciales :</label>
+        <textarea id="notes" name="notes" rows="3"></textarea>
+      </div>
+      <button type="submit" class="btn" id="submitBtn">Réserver</button>
+    </form>
+  </section>
+
+  <footer id="contact">
+    <div class="contact-info">
+      <h2>Contact</h2>
+      <p>Email : contact@maeled-restaurant.com</p>
+      <p>Numéro : 0606060606</p>
+      <p>Facebook : <a href="https://facebook.com/restau_maeled">restau_maeled</a></p>
+      <p>Instagram : <a href="https://instagram.com/restau_maeled">@restau_maeled</a></p>
+    </div>
+    <p class="copyright">&copy; 2025 MAELED. Tous droits réservés.</p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log("Reservation page loaded");
+      
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const dateField = document.getElementById('date');
+      if (dateField) {
+        dateField.value = tomorrow.toISOString().split('T')[0];
+      }
+      
+      const timeField = document.getElementById('time');
+      if (timeField) {
+        timeField.value = '20:00';
+      }
+      
+      const form = document.getElementById('reservationForm');
+      if (form) {
+        form.addEventListener('submit', function(event) {
+          event.preventDefault();
+          console.log("Form submitted!");
+          
+          const name = document.getElementById('name').value;
+          const prenom = document.getElementById('prenom').value;
+          const email = document.getElementById('email').value;
+          const phone = document.getElementById('phone').value;
+          const date = document.getElementById('date').value;
+          const time = document.getElementById('time').value;
+          const people = document.getElementById('people').value;
+          const notes = document.getElementById('notes').value;
+          
+          if (!name || !prenom || !phone || !date || !time || !people) {
+            alert("❌ Veuillez remplir tous les champs obligatoires (*)");
+            return;
+          }
+          
+          let reservations = JSON.parse(localStorage.getItem('maeled_reservations') || '[]');
+          
+          const newId = reservations.length > 0 ? Math.max(...reservations.map(r => r.id || 0)) + 1 : 1;
+          
+          const newReservation = {
+            id: newId,
+            name: `${prenom} ${name}`,
+            phone: phone,
+            email: email,
+            date: date,
+            time: time,
+            guests: parseInt(people),
+            status: 'en attente',
+            table: '',
+            notes: notes || '',
+            created: new Date().toISOString()
+          };
+          
+          reservations.push(newReservation);
+          localStorage.setItem('maeled_reservations', JSON.stringify(reservations));
+          
+          let notifications = JSON.parse(localStorage.getItem('maeled_notifications') || '[]');
+          notifications.unshift({
+            id: notifications.length + 1,
+            message: `Nouvelle réservation #${newId}: ${newReservation.name} pour ${newReservation.guests} personnes`,
+            time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+            read: false
+          });
+          localStorage.setItem('maeled_notifications', JSON.stringify(notifications));
+          
+          alert(`✅ RÉSERVATION CONFIRMÉE !\n\nMerci ${prenom} ${name} !\n\n📅 Date: ${date}\n⏰ Heure: ${time}\n👥 Personnes: ${people}\n📞 Contact: ${phone}\n\nVotre numéro de réservation: #${newId}\n\nNous avons hâte de vous accueillir !`);
+          
+          form.reset();
+          
+          const newTomorrow = new Date();
+          newTomorrow.setDate(newTomorrow.getDate() + 1);
+          if (dateField) dateField.value = newTomorrow.toISOString().split('T')[0];
+          if (timeField) timeField.value = '20:00';
+        });
+      }
+      
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const count = cart.reduce((total, item) => total + (item.quantity || 0), 0);
+      const panierCount = document.getElementById('panier-count');
+      if (panierCount) {
+        panierCount.textContent = count;
+      }
+    });
+  </script>
+  
+  <script src="script.js"></script>
+  <script src="auth.js"></script>
+  <script>
+    document.getElementById("logoutLink")?.addEventListener("click", function(e){e.preventDefault(); MaeledAuth.logout(false);});
+  </script>
+</body>
+</html>

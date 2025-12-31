@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MAELED - Restaurant Italien</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-required-role="user">
+  <header>
+    <h1>MAELED</h1>
+  </header>
+
+  <nav>
+    <ul>
+      <li><a href="home.html">Accueil</a></li>
+      <li><a href="reservation.html">Réservation</a></li>
+      <li><a href="menu.html">Menu</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="#" id="logoutLink" style="background-color: #9b59b6; color: white; padding: 0.5rem 1rem; border-radius: 4px;">Logout</a></li>
+
+    </ul>
+  </nav>
+
+  <section id="hero">
+    <h3>Bienvenue chez <b>MAELED</b></h3>
+    <p>Authentique cuisine italienne au cœur de Berrechid.</p>
+    <div class="gallery">
+      <img src="pics/ph1.jpg" alt="Restaurant interior">
+      <img src="pics/ph2.jpg" alt="Food presentation">
+      <img src="pics/ph5.jpg" alt="Dining area">
+    </div>
+    <div class="gallery">
+      <img src="pics/ph3.jpg" alt="Pasta dish">
+      <img src="pics/ph4.jpg" alt="Pizza preparation">
+      <img src="pics/ph6.jpg" alt="Dessert">
+    </div>
+  </section>
+
+  <section id="about">
+    <h2>À propos de MAELED</h2>
+    <p>Le restaurant MAELED incarne l'authenticité de la cuisine italienne dans une atmosphère chaleureuse et conviviale. Chaque plat est une invitation à découvrir les saveurs traditionnelles de l'Italie, préparées avec soin par des chefs passionnés.</p>
+  </section>
+
+  <footer id="contact">
+    <div class="contact-info">
+      <h2>Contact</h2>
+      <p>Email : contact@maeled-restaurant.com</p>
+      <p>Numéro : 0606060606</p>
+      <p>Facebook : <a href="https://facebook.com/restau_maeled">restau_maeled</a></p>
+      <p>Instagram : <a href="https://instagram.com/restau_maeled">@restau_maeled</a></p>
+    </div>
+    <p class="copyright">&copy; 2025 MAELED. Tous droits réservés.</p>
+  </footer>
+
+  <script src="script.js"></script>
+  <script src="auth.js"></script>
+  <script>
+    document.getElementById("logoutLink")?.addEventListener("click", function(e){e.preventDefault(); MaeledAuth.logout(false);});
+  </script>
+</body>
+</html>

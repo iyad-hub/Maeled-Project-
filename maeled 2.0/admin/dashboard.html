@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - MAELED</title>
+  <link rel="stylesheet" href="../admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body data-required-role="admin">
+  <div class="dashboard-container">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <h2>MAELED</h2>
+        <p>Restaurant Management</p>
+      </div>
+      
+      <nav class="sidebar-menu">
+  <a href="dashboard.html" class="menu-item">
+    <i class="fas fa-tachometer-alt"></i> Dashboard
+  </a>
+  <a href="reservations.html" class="menu-item">
+    <i class="fas fa-calendar-check"></i> Réservations
+  </a>
+  <a href="menu.html" class="menu-item">
+    <i class="fas fa-utensils"></i> Menu
+  </a>
+  <a href="orders.html" class="menu-item">
+    <i class="fas fa-shopping-cart"></i> Commandes
+  </a>
+  <!-- NEW SECTIONS -->
+  <a href="staff.html" class="menu-item">
+    <i class="fas fa-user-tie"></i> Personnel
+  </a>
+  <a href="inventory.html" class="menu-item">
+    <i class="fas fa-boxes"></i> Inventaire
+  </a>
+</nav>
+      
+      
+    </div>
+    
+    <main class="main-content">
+      <header class="main-header">
+        <div>
+          <h1>Tableau de Bord</h1>
+          <p>Vue d'ensemble du restaurant</p>
+        </div>
+        
+        <div>
+          <button class="notification-btn">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge" id="notificationCount">0</span>
+          </button>
+          <button class="mobile-menu-toggle">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      <a href="#" id="adminLogout" style="position:fixed;top:14px;right:14px;z-index:9999;background:#e74c3c;color:#fff;padding:10px 12px;border-radius:10px;text-decoration:none;font-weight:700">Logout</a>
+</header>
+      
+      <section class="kpi-grid">
+  <div class="kpi-card">
+    <div class="kpi-icon" style="background: #3498db;">
+      <i class="fas fa-users"></i>
+    </div>
+    <div class="kpi-info">
+      <h3>Total Clients</h3>
+      <div class="kpi-value" id="totalUsers">0</div>
+    </div>
+  </div>
+  
+  <div class="kpi-card">
+    <div class="kpi-icon" style="background: #2ecc71;">
+      <i class="fas fa-shopping-cart"></i>
+    </div>
+    <div class="kpi-info">
+      <h3>Total Commandes</h3>
+      <div class="kpi-value" id="totalOrders">0</div>
+    </div>
+  </div>
+  
+  <div class="kpi-card">
+    <div class="kpi-icon" style="background: #f39c12;">
+      <i class="fas fa-euro-sign"></i>
+    </div>
+    <div class="kpi-info">
+      <h3>Revenus Totaux</h3>
+      <div class="kpi-value" id="totalRevenue">0 €</div>
+    </div>
+  </div>
+  
+  <div class="kpi-card">
+    <div class="kpi-icon" style="background: #e74c3c;">
+      <i class="fas fa-clock"></i>
+    </div>
+    <div class="kpi-info">
+      <h3>Commandes en Attente</h3>
+      <div class="kpi-value" id="pendingOrders">0</div>
+    </div>
+  </div>
+  
+  <!-- NEW KPI: Active Staff -->
+  <div class="kpi-card">
+    <div class="kpi-icon" style="background: #9b59b6;">
+      <i class="fas fa-user-tie"></i>
+    </div>
+    <div class="kpi-info">
+      <h3>Personnel Actif</h3>
+      <div class="kpi-value" id="activeStaff">0</div>
+    </div>
+  </div>
+  
+  <!-- NEW KPI: Low Stock Items -->
+  <div class="kpi-card">
+    <div class="kpi-icon" style="background: #1abc9c;">
+      <i class="fas fa-exclamation-triangle"></i>
+    </div>
+    <div class="kpi-info">
+      <h3>Articles Faible Stock</h3>
+      <div class="kpi-value" id="lowStockItems">0</div>
+    </div>
+  </div>
+</section>
+      
+      <section class="charts-grid" style="grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));">
+        <div class="chart-card">
+          <h3>Ventes par Catégorie</h3>
+          <div class="chart-container" style="height: 250px;">
+            <canvas id="salesChart"></canvas>
+          </div>
+        </div>
+        
+        <div class="chart-card">
+          <h3>Commandes par Heure</h3>
+          <div class="chart-container" style="height: 250px;">
+            <canvas id="ordersHourChart"></canvas>
+          </div>
+        </div>
+        
+        <div class="chart-card">
+          <h3>Revenus des 7 Derniers Jours</h3>
+          <div class="chart-container" style="height: 250px;">
+            <canvas id="revenueChart"></canvas>
+          </div>
+        </div>
+        
+        <div class="chart-card">
+          <h3>Top 5 Plats Populaires</h3>
+          <div class="chart-container" style="height: 250px;">
+            <canvas id="popularDishesChart"></canvas>
+          </div>
+        </div>
+        
+        <div class="chart-card">
+          <h3>Statut des Commandes</h3>
+          <div class="chart-container" style="height: 250px;">
+            <canvas id="ordersStatusChart"></canvas>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="../auth.js"></script>
+  <script src="../dashboard.js"></script>
+  <script>
+    document.getElementById("adminLogout")?.addEventListener("click", function(e){e.preventDefault(); MaeledAuth.logout(true);});
+  </script>
+</body>
+</html>

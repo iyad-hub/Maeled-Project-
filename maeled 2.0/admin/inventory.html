@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventaire - MAELED</title>
+  <link rel="stylesheet" href="../admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body data-required-role="admin">
+  <div class="dashboard-container">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <h2>MAELED</h2>
+        <p>Restaurant Management</p>
+      </div>
+      
+      <nav class="sidebar-menu">
+        <a href="dashboard.html" class="menu-item">
+          <i class="fas fa-tachometer-alt"></i> Dashboard
+        </a>
+        <a href="reservations.html" class="menu-item">
+          <i class="fas fa-calendar-check"></i> Réservations
+        </a>
+        <a href="menu.html" class="menu-item">
+          <i class="fas fa-utensils"></i> Menu
+        </a>
+        <a href="orders.html" class="menu-item">
+          <i class="fas fa-shopping-cart"></i> Commandes
+        </a>
+        <a href="staff.html" class="menu-item">
+          <i class="fas fa-user-tie"></i> Personnel
+        </a>
+        <a href="inventory.html" class="menu-item active">
+          <i class="fas fa-boxes"></i> Inventaire
+        </a>
+      </nav>
+      
+      
+    </div>
+    
+    <main class="main-content">
+      <header class="main-header">
+        <div>
+          <h1>Gestion de l'Inventaire</h1>
+          <p>Suivez les stocks et les commandes de fournitures</p>
+        </div>
+        
+        <div>
+          <button class="notification-btn">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge" id="notificationCount">0</span>
+          </button>
+          <button class="mobile-menu-toggle">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      <a href="#" id="adminLogout" style="position:fixed;top:14px;right:14px;z-index:9999;background:#e74c3c;color:#fff;padding:10px 12px;border-radius:10px;text-decoration:none;font-weight:700">Logout</a>
+</header>
+      
+      <div class="kpi-grid" style="margin-bottom: 30px;">
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background: #3498db;">
+            <i class="fas fa-box-open"></i>
+          </div>
+          <div class="kpi-info">
+            <h3>Articles en Stock</h3>
+            <div class="kpi-value" id="totalItems">0</div>
+          </div>
+        </div>
+        
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background: #f39c12;">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+          <div class="kpi-info">
+            <h3>Faible Stock</h3>
+            <div class="kpi-value" id="lowStockItems">0</div>
+          </div>
+        </div>
+        
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background: #e74c3c;">
+            <i class="fas fa-times-circle"></i>
+          </div>
+          <div class="kpi-info">
+            <h3>Rupture de Stock</h3>
+            <div class="kpi-value" id="outOfStockItems">0</div>
+          </div>
+        </div>
+        
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background: #2ecc71;">
+            <i class="fas fa-euro-sign"></i>
+          </div>
+          <div class="kpi-info">
+            <h3>Valeur Totale</h3>
+            <div class="kpi-value" id="totalValue">0 €</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="crud-header">
+        <h2>Tous les Articles en Stock</h2>
+        <div>
+          <button class="btn btn-success" id="addItemBtn">
+            <i class="fas fa-plus"></i> Ajouter un Article
+          </button>
+          <button class="btn btn-primary" id="orderSuppliesBtn">
+            <i class="fas fa-truck"></i> Commander
+          </button>
+        </div>
+      </div>
+      
+      <div class="table-container">
+        <div class="table-header">
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInventory" placeholder="Rechercher un article...">
+          </div>
+          
+          <select class="filter-select" id="categoryFilter">
+            <option value="all">Toutes les catégories</option>
+            <option value="viande">Viandes</option>
+            <option value="légumes">Légumes</option>
+            <option value="épices">Épices</option>
+            <option value="boissons">Boissons</option>
+            <option value="produits laitiers">Produits Laitiers</option>
+            <option value="fournitures">Fournitures</option>
+          </select>
+          
+          <select class="filter-select" id="stockFilter">
+            <option value="all">Tous les stocks</option>
+            <option value="low">Faible stock</option>
+            <option value="out">Rupture</option>
+            <option value="normal">Stock normal</option>
+          </select>
+        </div>
+        
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th data-sort="id">ID</th>
+              <th data-sort="name">Nom de l'Article</th>
+              <th data-sort="category">Catégorie</th>
+              <th data-sort="quantity">Quantité</th>
+              <th data-sort="unit">Unité</th>
+              <th data-sort="min">Seuil Min</th>
+              <th data-sort="cost">Coût Unitaire</th>
+              <th data-sort="value">Valeur</th>
+              <th data-sort="status">Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="inventoryTableBody">
+            <!-- Inventory data will be loaded here -->
+          </tbody>
+        </table>
+        
+        <div class="pagination">
+          <div class="pagination-info" id="paginationInfo">
+            Affichage de 1 à 10 sur 0 articles
+          </div>
+          
+          <div class="pagination-controls">
+            <button class="page-btn prev-page" disabled>
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            
+            <div class="page-numbers" id="pageNumbers">
+              <button class="page-btn active">1</button>
+            </div>
+            
+            <button class="page-btn next-page" disabled>
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  
+  <!-- Add Item Modal -->
+  <div class="modal" id="addItemModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Ajouter un Article à l'Inventaire</h3>
+        <button class="close-modal">&times;</button>
+      </div>
+      
+      <form id="inventoryForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nom de l'Article *</label>
+            <input type="text" id="itemName" required>
+          </div>
+          <div class="form-group">
+            <label>Catégorie *</label>
+            <select id="itemCategory" required>
+              <option value="">Choisir une catégorie</option>
+              <option value="viande">Viandes</option>
+              <option value="légumes">Légumes</option>
+              <option value="épices">Épices</option>
+              <option value="boissons">Boissons</option>
+              <option value="produits laitiers">Produits Laitiers</option>
+              <option value="fournitures">Fournitures</option>
+              <option value="pains">Pains & Pâtes</option>
+              <option value="fruits">Fruits</option>
+              <option value="condiments">Condiments</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Quantité Actuelle *</label>
+            <input type="number" id="itemQuantity" step="0.1" min="0" required>
+          </div>
+          <div class="form-group">
+            <label>Unité de Mesure *</label>
+            <select id="itemUnit" required>
+              <option value="kg">Kilogramme (kg)</option>
+              <option value="g">Gramme (g)</option>
+              <option value="L">Litre (L)</option>
+              <option value="mL">Millilitre (mL)</option>
+              <option value="pièce">Pièce</option>
+              <option value="boîte">Boîte</option>
+              <option value="paquet">Paquet</option>
+              <option value="carton">Carton</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Seuil Minimum *</label>
+            <input type="number" id="itemMin" step="0.1" min="0" required>
+          </div>
+          <div class="form-group">
+            <label>Coût Unitaire (€) *</label>
+            <input type="number" id="itemCost" step="0.01" min="0" required>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Fournisseur</label>
+            <input type="text" id="itemSupplier" placeholder="Nom du fournisseur...">
+          </div>
+          <div class="form-group">
+            <label>Date d'Expiration</label>
+            <input type="date" id="itemExpiry">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Emplacement de Stockage</label>
+          <select id="itemLocation">
+            <option value="">Sélectionner</option>
+            <option value="frigo1">Frigo Principal</option>
+            <option value="frigo2">Frigo Réserve</option>
+            <option value="congélateur">Congélateur</option>
+            <option value="réserve sèche">Réserve Sèche</option>
+            <option value="cellier">Cellier</option>
+            <option value="stock cuisine">Stock Cuisine</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea id="itemNotes" rows="2" placeholder="Notes sur l'article..."></textarea>
+        </div>
+        
+        <button type="submit" class="btn btn-success btn-block">
+          <i class="fas fa-save"></i> Enregistrer l'Article
+        </button>
+      </form>
+    </div>
+  </div>
+
+<div class="modal" id="editItemModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Modifier l’Article</h3>
+        <button class="close-modal">&times;</button>
+      </div>
+      
+      <form id="editInventoryForm">
+        <input type="hidden" id="editInventoryId">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nom de l'Article *</label>
+            <input type="text" id="editItemName" required>
+          </div>
+          <div class="form-group">
+            <label>Catégorie *</label>
+            <select id="editItemCategory" required>
+              <option value="">Choisir une catégorie</option>
+              <option value="viande">Viandes</option>
+              <option value="légumes">Légumes</option>
+              <option value="épices">Épices</option>
+              <option value="boissons">Boissons</option>
+              <option value="produits laitiers">Produits Laitiers</option>
+              <option value="fournitures">Fournitures</option>
+              <option value="pains">Pains & Pâtes</option>
+              <option value="fruits">Fruits</option>
+              <option value="condiments">Condiments</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Quantité Actuelle *</label>
+            <input type="number" id="editItemQuantity" step="0.1" min="0" required>
+          </div>
+          <div class="form-group">
+            <label>Unité de Mesure *</label>
+            <select id="editItemUnit" required>
+              <option value="kg">Kilogramme (kg)</option>
+              <option value="g">Gramme (g)</option>
+              <option value="L">Litre (L)</option>
+              <option value="mL">Millilitre (mL)</option>
+              <option value="pièce">Pièce</option>
+              <option value="boîte">Boîte</option>
+              <option value="paquet">Paquet</option>
+              <option value="carton">Carton</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Seuil Minimum *</label>
+            <input type="number" id="editItemMin" step="0.1" min="0" required>
+          </div>
+          <div class="form-group">
+            <label>Coût Unitaire (€) *</label>
+            <input type="number" id="editItemCost" step="0.01" min="0" required>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Fournisseur</label>
+            <input type="text" id="editItemSupplier" placeholder="Nom du fournisseur...">
+          </div>
+          <div class="form-group">
+            <label>Date d'Expiration</label>
+            <input type="date" id="editItemExpiry">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Emplacement de Stockage</label>
+          <select id="editItemLocation">
+            <option value="">Sélectionner</option>
+            <option value="frigo1">Frigo Principal</option>
+            <option value="frigo2">Frigo Réserve</option>
+            <option value="congélateur">Congélateur</option>
+            <option value="réserve sèche">Réserve Sèche</option>
+            <option value="cellier">Cellier</option>
+            <option value="stock cuisine">Stock Cuisine</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea id="editItemNotes" rows="2" placeholder="Notes sur l'article..."></textarea>
+        </div>
+        
+        <button type="submit" class="btn btn-success btn-block">
+          <i class="fas fa-save"></i> Enregistrer les Modifications</button>
+      </form>
+    </div>
+  </div>
+
+  
+  <!-- Adjust Quantity Modal -->
+  <div class="modal" id="adjustQuantityModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="adjustTitle">Ajuster la Quantité</h3>
+        <button class="close-modal">&times;</button>
+      </div>
+      
+      <form id="adjustForm">
+        <input type="hidden" id="adjustItemId">
+        
+        <div class="form-group">
+          <label>Article: <strong id="adjustItemName"></strong></label>
+          <label>Quantité actuelle: <span id="currentQuantity" class="badge badge-info">0</span></label>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Type d'Opération *</label>
+            <select id="adjustType" required>
+              <option value="add">Ajouter au stock</option>
+              <option value="remove">Retirer du stock</option>
+              <option value="set">Définir nouvelle quantité</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Quantité *</label>
+            <input type="number" id="adjustAmount" step="0.1" min="0" required>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Raison</label>
+          <select id="adjustReason">
+            <option value="">Sélectionner une raison</option>
+            <option value="commande">Nouvelle commande</option>
+            <option value="utilisation">Utilisation en cuisine</option>
+            <option value="ajustement">Ajustement manuel</option>
+            <option value="perte">Perte/Égarement</option>
+            <option value="défaut">Article défectueux</option>
+            <option value="inventaire">Inventaire physique</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea id="adjustNotes" rows="2" placeholder="Notes sur l'ajustement..."></textarea>
+        </div>
+        
+        <button type="submit" class="btn btn-primary btn-block">
+          <i class="fas fa-check"></i> Confirmer l'Ajustement
+        </button>
+      </form>
+    </div>
+  </div>
+  
+  <script src="../auth.js"></script>
+  <script src="../inventory.js"></script>
+  <script>
+    document.getElementById("adminLogout")?.addEventListener("click", function(e){e.preventDefault(); MaeledAuth.logout(true);});
+  </script>
+</body>
+</html>

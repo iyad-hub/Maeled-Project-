@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menu Complet - MAELED</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-required-role="user">
+  <header>
+    <h1>MAELED</h1>
+  </header>
+
+  <nav>
+    <ul>
+      <li><a href="home.html">Accueil</a></li>
+      <li><a href="reservation.html">Réservation</a></li>
+      <li><a href="menu.html">Menu</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="#" id="logoutLink" style="background-color: #9b59b6; color: white; padding: 0.5rem 1rem; border-radius: 4px;">Logout</a></li>
+
+    </ul>
+  </nav>
+
+  <div class="menu-container">
+  <h1>Notre Menu Complet</h1>
+  <div id="menuDynamic"></div>
+</div>
+
+<footer id="contact">
+    <div class="contact-info">
+      <h2>Contact</h2>
+      <p>Email : contact@maeled-restaurant.com</p>
+      <p>Téléphone : 0606060606</p>
+      <p>Facebook : <a href="https://facebook.com/restau_maeled">restau_maeled</a></p>
+      <p>Instagram : <a href="https://instagram.com/restau_maeled">@restau_maeled</a></p>
+    </div>
+    <p class="copyright">&copy; 2025 MAELED. Tous droits réservés.</p>
+  </footer>
+
+  <script src="initialize-data.js"></script>
+  <script src="script.js"></script>
+  <script src="auth.js"></script>
+  <script>
+    document.getElementById("logoutLink")?.addEventListener("click", function(e){e.preventDefault(); MaeledAuth.logout(false);});
+  </script>
+</body>
+</html>

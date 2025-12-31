@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menu - MAELED</title>
+  <link rel="stylesheet" href="../admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body data-required-role="admin">
+  <div class="dashboard-container">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <h2>MAELED</h2>
+        <p>Restaurant Management</p>
+      </div>
+      
+      <nav class="sidebar-menu">
+  <a href="dashboard.html" class="menu-item">
+    <i class="fas fa-tachometer-alt"></i> Dashboard
+  </a>
+  <a href="reservations.html" class="menu-item">
+    <i class="fas fa-calendar-check"></i> Réservations
+  </a>
+  <a href="menu.html" class="menu-item">
+    <i class="fas fa-utensils"></i> Menu
+  </a>
+  <a href="orders.html" class="menu-item">
+    <i class="fas fa-shopping-cart"></i> Commandes
+  </a>
+  <!-- NEW SECTIONS -->
+  <a href="staff.html" class="menu-item">
+    <i class="fas fa-user-tie"></i> Personnel
+  </a>
+  <a href="inventory.html" class="menu-item">
+    <i class="fas fa-boxes"></i> Inventaire
+  </a>
+</nav>
+      
+      
+    </div>
+    
+    <main class="main-content">
+      <header class="main-header">
+        <div>
+          <h1>Gestion du Menu</h1>
+          <p>Gérez les plats et boissons du restaurant</p>
+        </div>
+        
+        <div>
+          <button class="notification-btn">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge" id="notificationCount">0</span>
+          </button>
+          <button class="mobile-menu-toggle">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      <a href="#" id="adminLogout" style="position:fixed;top:14px;right:14px;z-index:9999;background:#e74c3c;color:#fff;padding:10px 12px;border-radius:10px;text-decoration:none;font-weight:700">Logout</a>
+</header>
+      
+      <div class="crud-header">
+        <h2>Tous les Plats</h2>
+        <div>
+          <button class="btn btn-success" id="addMenuItemBtn">
+            <i class="fas fa-plus"></i> Ajouter un Plat
+          </button>
+        </div>
+      </div>
+      
+      <div class="table-container">
+        <div class="table-header">
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchMenu" placeholder="Rechercher un plat...">
+          </div>
+          
+          <select class="filter-select" id="categoryFilter">
+            <option value="all">Toutes les catégories</option>
+            <option value="entrées">Entrées</option>
+            <option value="pizzas">Pizzas</option>
+            <option value="pâtes">Pâtes</option>
+            <option value="desserts">Desserts</option>
+            <option value="boissons">Boissons</option>
+          </select>
+          
+          <select class="filter-select" id="availabilityFilter">
+            <option value="all">Disponibilité</option>
+            <option value="available">Disponible</option>
+            <option value="unavailable">Indisponible</option>
+          </select>
+        </div>
+        
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th data-sort="id">ID</th>
+              <th data-sort="name">Nom du Plat</th>
+              <th data-sort="category">Catégorie</th>
+              <th data-sort="price">Prix</th>
+              <th data-sort="available">Disponibilité</th>
+              <th data-sort="popularity">Popularité</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="menuTableBody">
+          </tbody>
+        </table>
+        
+        <div class="pagination">
+          <div class="pagination-info" id="paginationInfo">
+            Affichage de 1 à 10 sur 0 plats
+          </div>
+          
+          <div class="pagination-controls">
+            <button class="page-btn prev-page" disabled>
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            
+            <div class="page-numbers" id="pageNumbers">
+              <button class="page-btn active">1</button>
+            </div>
+            
+            <button class="page-btn next-page" disabled>
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  
+  <div class="modal" id="addMenuItemModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Ajouter un Plat</h3>
+        <button class="close-modal">&times;</button>
+      </div>
+      
+      <form id="menuItemForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nom du Plat *</label>
+            <input type="text" id="itemName" required>
+          </div>
+          <div class="form-group">
+            <label>Catégorie *</label>
+            <select id="itemCategory" required>
+              <option value="">Choisir une catégorie</option>
+              <option value="entrées">Entrées</option>
+              <option value="pizzas">Pizzas</option>
+              <option value="pâtes">Pâtes</option>
+              <option value="desserts">Desserts</option>
+              <option value="boissons">Boissons</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Prix (€) *</label>
+            <input type="number" id="itemPrice" step="0.01" min="0" required>
+          </div>
+          <div class="form-group">
+            <label>Coût (€)</label>
+            <input type="number" id="itemCost" step="0.01" min="0">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Ingrédients</label>
+          <textarea id="itemIngredients" rows="3" placeholder="Liste des ingrédients principaux..."></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="itemDescription" rows="2" placeholder="Description du plat..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Image (URL)</label>
+          <input type="url" id="itemImage" placeholder="https://...">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Temps de préparation (min)</label>
+            <input type="number" id="itemPrepTime" min="0">
+          </div>
+          <div class="form-group">
+            <label>Disponible</label>
+            <label class="availability-toggle">
+              <input type="checkbox" id="itemAvailable" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+        
+        <button type="submit" class="btn btn-success btn-block">
+          <i class="fas fa-save"></i> Enregistrer le Plat
+        </button>
+      </form>
+    </div>
+  </div>
+
+<div class="modal" id="editMenuItemModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Modifier le Plat</h3>
+        <button class="close-modal">&times;</button>
+      </div>
+      
+      <form id="editMenuItemForm">
+        <input type="hidden" id="editItemId">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nom du Plat *</label>
+            <input type="text" id="editItemName" required>
+          </div>
+          <div class="form-group">
+            <label>Catégorie *</label>
+            <select id="editItemCategory" required>
+              <option value="">Choisir une catégorie</option>
+              <option value="entrées">Entrées</option>
+              <option value="pizzas">Pizzas</option>
+              <option value="pâtes">Pâtes</option>
+              <option value="desserts">Desserts</option>
+              <option value="boissons">Boissons</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Prix (€) *</label>
+            <input type="number" id="editItemPrice" step="0.01" min="0" required>
+          </div>
+          <div class="form-group">
+            <label>Coût (€)</label>
+            <input type="number" id="editItemCost" step="0.01" min="0">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Ingrédients</label>
+          <textarea id="editItemIngredients" rows="3" placeholder="Liste des ingrédients principaux..."></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="editItemDescription" rows="2" placeholder="Description du plat..."></textarea>
+        </div>
+
+        
+        <div class="form-group">
+          <label class="checkbox-inline">
+            <input type="checkbox" id="editChangeImage">
+            Changer l'image (optionnel)
+          </label>
+        </div>
+
+        <div class="form-group" id="editImageGroup" style="display:none;">
+          <label>Image (URL)</label>
+          <input type="url" id="editItemImage" placeholder="https://..." disabled>
+          <small style="opacity:0.8; display:block; margin-top:6px;">
+            Laisse vide pour conserver l'image actuelle.
+          </small>
+        </div>
+
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Temps de préparation (min)</label>
+            <input type="number" id="editItemPrepTime" min="0">
+          </div>
+          <div class="form-group">
+            <label>Disponible</label>
+            <label class="availability-toggle">
+              <input type="checkbox" id="editItemAvailable" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+        
+        <button type="submit" class="btn btn-success btn-block">
+          <i class="fas fa-save"></i> Enregistrer les Modifications
+        </button>
+      </form>
+    </div>
+  </div>
+
+  
+  <script src="../auth.js"></script>
+  <script src="../menu.js"></script>
+  <script>
+    document.getElementById("adminLogout")?.addEventListener("click", function(e){e.preventDefault(); MaeledAuth.logout(true);});
+  </script>
+</body>
+</html>
